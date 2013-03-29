@@ -1,6 +1,6 @@
 package Zabbix::Reporter;
 {
-  $Zabbix::Reporter::VERSION = '0.01';
+  $Zabbix::Reporter::VERSION = '0.02';
 }
 BEGIN {
   $Zabbix::Reporter::AUTHORITY = 'cpan:TEX';

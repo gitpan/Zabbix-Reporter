@@ -42,5 +42,5 @@ requires:
 resources:
   bugtracker: https://github.com/gittex/Zabbix-Reporter/issues
   repository: git://github.com/gittex/Zabbix-Reporter.git
-version: 0.01
+version: 0.02
 x_authority: cpan:TEX

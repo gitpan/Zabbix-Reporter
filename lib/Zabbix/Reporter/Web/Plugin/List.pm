@@ -1,6 +1,6 @@
 package Zabbix::Reporter::Web::Plugin::List;
 {
-  $Zabbix::Reporter::Web::Plugin::List::VERSION = '0.01';
+  $Zabbix::Reporter::Web::Plugin::List::VERSION = '0.02';
 }
 BEGIN {
   $Zabbix::Reporter::Web::Plugin::List::AUTHORITY = 'cpan:TEX';
@@ -27,7 +27,7 @@ extends 'Zabbix::Reporter::Web::Plugin';
 # has ...
 # with ...
 # initializers ...
-sub _init_fields { return [qw(limit offset)]; }
+sub _init_fields { return [qw(limit offset refresh)]; }
 
 sub _init_alias { return 'list_triggers'; }
 
@@ -37,12 +37,14 @@ sub execute {
     my $request = shift;
     
     my $triggers = $self->zr()->triggers();
+    my $refresh  = $request->{'refresh'} || 30;
 
     my $body;
     $self->tt()->process(
         'list_triggers.tpl',
         {
             'triggers' => $triggers,
+            'refresh'  => $refresh,
         },
         \$body,
     ) or $self->logger()->log( message => 'TT error: '.$self->tt()->error, level => 'warning', );
