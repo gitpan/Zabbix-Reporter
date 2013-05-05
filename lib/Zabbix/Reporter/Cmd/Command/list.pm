@@ -1,6 +1,6 @@
 package Zabbix::Reporter::Cmd::Command::list;
 {
-  $Zabbix::Reporter::Cmd::Command::list::VERSION = '0.02';
+  $Zabbix::Reporter::Cmd::Command::list::VERSION = '0.03';
 }
 BEGIN {
   $Zabbix::Reporter::Cmd::Command::list::AUTHORITY = 'cpan:TEX';
@@ -20,6 +20,7 @@ use namespace::autoclean;
 # use Carp;
 # use English qw( -no_match_vars );
 # use Try::Tiny;
+use Data::Dumper;
 
 # extends ...
 extends 'Zabbix::Reporter::Cmd::Command';
@@ -32,6 +33,7 @@ sub execute {
     my $self = shift;
     
     my $triggers = $self->zr()->triggers();
+    print Dumper($triggers);
     
     # TODO not yet implemented
     

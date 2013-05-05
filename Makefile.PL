@@ -11,7 +11,7 @@ install_share dist => "share";
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "The great new Zabbix::Reporter!",
+  "ABSTRACT" => "Zabbix dashboard",
   "AUTHOR" => "Dominik Schulz <dominik.schulz\@gauner.org>",
   "BUILD_REQUIRES" => {
     "Test::More" => 0
@@ -29,11 +29,12 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "Zabbix::Reporter",
   "PREREQ_PM" => {
-    "Cache::FileCache" => 0,
+    "Cache::MemoryCache" => 0,
     "Config::Yak" => 0,
     "Config::Yak::LazyConfig" => 0,
     "Config::Yak::RequiredConfig" => 0,
     "DBI" => 0,
+    "Data::Dumper" => 0,
     "File::ShareDir" => 0,
     "Log::Tree" => 0,
     "Log::Tree::Logger" => 0,
@@ -53,7 +54,7 @@ my %WriteMakefileArgs = (
     "strict" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.02",
+  "VERSION" => "0.03",
   "test" => {
     "TESTS" => "t/*.t"
   }

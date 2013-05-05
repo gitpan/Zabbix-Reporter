@@ -1,5 +1,5 @@
 {
-   "abstract" : "The great new Zabbix::Reporter!",
+   "abstract" : "Zabbix dashboard",
    "author" : [
       "Dominik Schulz <dominik.schulz@gauner.org>"
    ],
@@ -27,11 +27,12 @@
       },
       "runtime" : {
          "requires" : {
-            "Cache::FileCache" : "0",
+            "Cache::MemoryCache" : "0",
             "Config::Yak" : "0",
             "Config::Yak::LazyConfig" : "0",
             "Config::Yak::RequiredConfig" : "0",
             "DBI" : "0",
+            "Data::Dumper" : "0",
             "File::ShareDir" : "0",
             "Log::Tree" : "0",
             "Log::Tree::Logger" : "0",
@@ -70,7 +71,7 @@
          "web" : "https://github.com/gittex/Zabbix-Reporter"
       }
    },
-   "version" : "0.02",
+   "version" : "0.03",
    "x_authority" : "cpan:TEX"
 }
 

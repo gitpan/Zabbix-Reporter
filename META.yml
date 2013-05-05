@@ -1,5 +1,5 @@
 ---
-abstract: 'The great new Zabbix::Reporter!'
+abstract: 'Zabbix dashboard'
 author:
   - 'Dominik Schulz <dominik.schulz@gauner.org>'
 build_requires:
@@ -15,11 +15,12 @@ meta-spec:
   version: 1.4
 name: Zabbix-Reporter
 requires:
-  Cache::FileCache: 0
+  Cache::MemoryCache: 0
   Config::Yak: 0
   Config::Yak::LazyConfig: 0
   Config::Yak::RequiredConfig: 0
   DBI: 0
+  Data::Dumper: 0
   File::ShareDir: 0
   Log::Tree: 0
   Log::Tree::Logger: 0
@@ -42,5 +43,5 @@ requires:
 resources:
   bugtracker: https://github.com/gittex/Zabbix-Reporter/issues
   repository: git://github.com/gittex/Zabbix-Reporter.git
-version: 0.02
+version: 0.03
 x_authority: cpan:TEX

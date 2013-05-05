@@ -1,16 +1,17 @@
 package Zabbix::Reporter;
 {
-  $Zabbix::Reporter::VERSION = '0.02';
+  $Zabbix::Reporter::VERSION = '0.03';
 }
 BEGIN {
   $Zabbix::Reporter::AUTHORITY = 'cpan:TEX';
 }
+# ABSTRACT: Zabbix dashboard
 
 use Moose;
 use namespace::autoclean;
 
 use DBI;
-use Cache::FileCache;
+use Cache::MemoryCache;
 
 has 'dbh' => (
     'is'    => 'rw',
@@ -49,8 +50,17 @@ has '_severity_map' => (
     'isa'   => 'ArrayRef',
     'default' => sub {
         [qw(nc information warning average high disaster)],
-    }
+    },
 );
+
+has '_event_value_map' => (
+   'is'        => 'ro',
+   'isa'       => 'ArrayRef',
+   'default'   => sub {
+      [qw(OK PROBLEM UNKNOWN)],
+   },
+);
+
 
 with qw(Config::Yak::RequiredConfig Log::Tree::RequiredLogger);
 
@@ -82,7 +92,10 @@ sub _init_dbh {
 sub _init_cache {
     my $self = shift;
     
-    my $Cache = Cache::FileCache::->new();
+    my $Cache = Cache::MemoryCache::->new({
+      'namespace'          => 'ZabbixReporter',
+      'default_expires_in' => 600,
+    });
     
     return $Cache;
 }
@@ -93,11 +106,13 @@ sub fetch_n_store {
     my $timeout = shift;
     my @args = @_;
     
-    my $result = $self->cache()->get($query);
+    my $key = $query.join(',',@args);
     
-    if( ! defined($result)) {
+    my $result = $self->cache()->get($key);
+    
+    if( ! defined($result) ) {
         $result = $self->fetch($query,@args);
-        $self->cache()->set($query,$result,$timeout);
+        $self->cache()->set($key,$result,$timeout);
     }
     
     return $result;
@@ -171,6 +186,8 @@ EOS
     my $rows = $self->fetch_n_store($sql,60);
 
     # Post processing
+    my @unacked = ();
+    my @acked   = ();
     if($rows) {
         foreach my $row (@{$rows}) {
             if (defined($row->{'priority'})) {
@@ -179,9 +196,111 @@ EOS
             if (defined($row->{'description'})) {
                 $row->{'description'} =~ s/\{HOSTNAME\}/$row->{'host'}/g;
             }
+            if (defined($row->{'triggerid'}) && defined($row->{'lastclock'})) {
+               my $ack = $self->acks($row->{'triggerid'},$row->{'lastclock'});
+               if($ack && ref($ack) eq 'ARRAY' && scalar @{$ack} > 0) {
+                  foreach my $field (keys %{$ack->[0]}) {
+                     $row->{$field} = $ack->[0]->{$field};
+                  }
+               }
+            }
+            # this should be the last post-processing action
+            if($row->{'acknowledged'}) {
+               push(@acked,$row);
+            } else {
+               push(@unacked,$row);
+            }
+        }
+    }
+    # sort acked triggers to the end
+    @{$rows} = (@unacked,@acked);
+
+    # Check for any disabled actions and prepend a warning as a pseudo trigger
+    # if there are some
+    my $disacts = $self->disabled_actions();
+   if($disacts && ref($disacts) eq 'ARRAY' && scalar @{$disacts} > 0) {
+      my $row = {
+         'severity'     => 'high',
+         'host'         => 'Zabbix',
+         'description'  => 'Notifications disabled!',
+         'lastchange'   => time(),
+         'comments'     => 'There are '.(scalar @{$disacts}).' notifications disabled. Please make sure you enable them again in time.',
+      };
+      unshift @{$rows}, $row;
+   }
+    
+    return $rows;
+}
+
+sub acks {
+    my $self = shift;
+    my $triggerid = shift;
+    my $triggerclock = shift;
+    
+    my $sql = <<'EOS';
+SELECT
+   e.eventid,
+   e.clock AS eventclock,
+   e.value,
+   e.acknowledged,
+   a.acknowledgeid,
+   a.userid,
+   a.clock AS ackclock,
+   a.message,
+   u.alias AS user
+FROM
+   events AS e
+LEFT JOIN
+   acknowledges AS a
+ON
+   e.eventid = a.eventid
+LEFT JOIN
+   users AS u
+ON
+   a.userid = u.userid
+WHERE
+   e.source = 0 AND
+   e.object = 0 AND
+   e.objectid = ? AND
+   e.clock >= ?
+ORDER BY
+   eventid DESC
+LIMIT 1
+EOS
+
+    my $rows = $self->fetch_n_store($sql,60,($triggerid,$triggerclock));
+
+    # Post processing
+    if($rows) {
+        foreach my $row (@{$rows}) {
+            if (defined($row->{'value'})) {
+                $row->{'status'} = $self->_event_value_map()->[$row->{'value'}];
+            }
         }
     }
     
+    return $rows;
+}
+
+sub disabled_actions {
+    my $self = shift;
+    
+    # status = 0 -> action is enabled
+    # status = 1 -> action is disabled
+    my $sql = <<'EOS';
+SELECT
+   a.actionid,
+   a.name,
+   a.status
+FROM
+   actions AS a
+WHERE
+   a.eventsource = 0 AND
+   status = 1
+EOS
+
+    my $rows = $self->fetch_n_store($sql,60);
+
     return $rows;
 }
 
@@ -197,18 +316,7 @@ __END__
 
 =head1 NAME
 
-Zabbix::Reporter
-
-=head1 SYNOPSIS
-
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use Zabbix::Reporter;
-
-    my $foo = Zabbix::Reporter->new();
-    ...
+Zabbix::Reporter - Zabbix dashboard
 
 =head1 METHODS
 
@@ -224,72 +332,17 @@ Fetch a result directly from DB.
 
 Retrieve all matching triggers.
 
+=head2 acks
+
+Retrieve all matching acknowlegements.
+
+=head2 disabled_actions
+
+Retrieve all disabled actions.
+
 =head1 NAME
 
-Zabbix::Reporter - The great new Zabbix::Reporter!
-
-=head1 VERSION
-
-Version 0.01
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 SUBROUTINES/METHODS
-
-=head2 function1
-
-=head1 AUTHOR
-
-Dominik Schulz, C<< <dominik.schulz at gauner.org> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-zabbix-reporter at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Zabbix-Reporter>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Zabbix::Reporter
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Zabbix-Reporter>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Zabbix-Reporter>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Zabbix-Reporter>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Zabbix-Reporter/>
-
-=back
-
-=head1 ACKNOWLEDGEMENTS
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright 2012 Dominik Schulz.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
+Zabbix::Reporter - Zabbix dashboard
 
 =head1 AUTHOR
 

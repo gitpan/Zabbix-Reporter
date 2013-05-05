@@ -1,6 +1,6 @@
 package Zabbix::Reporter::Cmd::Command;
 {
-  $Zabbix::Reporter::Cmd::Command::VERSION = '0.02';
+  $Zabbix::Reporter::Cmd::Command::VERSION = '0.03';
 }
 BEGIN {
   $Zabbix::Reporter::Cmd::Command::AUTHORITY = 'cpan:TEX';
@@ -70,7 +70,7 @@ sub _init_logger {
     return $Logger;
 } ## end sub _init_logger
 
-sub _init_sapi {
+sub _init_zr {
     my $self = shift;
 
     my $ZR = Zabbix::Reporter::->new(
@@ -81,7 +81,7 @@ sub _init_sapi {
     );
 
     return $ZR;
-} ## end sub _init_sapi
+} ## end sub _init_zr
 
 # your code here ...
 
