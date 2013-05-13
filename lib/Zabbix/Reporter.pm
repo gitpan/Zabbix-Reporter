@@ -1,6 +1,6 @@
 package Zabbix::Reporter;
 {
-  $Zabbix::Reporter::VERSION = '0.03';
+  $Zabbix::Reporter::VERSION = '0.04';
 }
 BEGIN {
   $Zabbix::Reporter::AUTHORITY = 'cpan:TEX';
@@ -85,6 +85,7 @@ sub _init_dbh {
     my $self = shift;
 
     my $dbh = DBI->connect($self->_dsn());
+    $dbh->{'mysql_auto_reconnect'} = 1;
     
     return $dbh;
 }
