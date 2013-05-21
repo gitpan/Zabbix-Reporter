@@ -24,9 +24,11 @@ lib/Zabbix/Reporter/Web.pm
 lib/Zabbix/Reporter/Web/Plugin.pm
 lib/Zabbix/Reporter/Web/Plugin/Demo.pm
 lib/Zabbix/Reporter/Web/Plugin/List.pm
+lib/Zabbix/Reporter/Web/Plugin/Selftest.pm
 share/res/css/default.css
 share/res/img/checkbox_no.svg
 share/res/img/checkbox_yes.svg
+share/res/img/sprite.png
 share/tpl/list_triggers.tpl
 t/00-load.t
 t/manifest.t

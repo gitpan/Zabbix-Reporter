@@ -1,6 +1,6 @@
 package Zabbix::Reporter::Web::Plugin::Demo;
 {
-  $Zabbix::Reporter::Web::Plugin::Demo::VERSION = '0.04';
+  $Zabbix::Reporter::Web::Plugin::Demo::VERSION = '0.05';
 }
 BEGIN {
   $Zabbix::Reporter::Web::Plugin::Demo::AUTHORITY = 'cpan:TEX';
@@ -35,7 +35,7 @@ sub _init_alias { return 'demo_triggers'; }
 sub execute {
     my $self = shift;
     my $request = shift;
-    
+
     my $triggers = [
       {
          'severity'     => 'disaster',
@@ -87,7 +87,7 @@ sub execute {
          'description'  => 'DNS Down',
          'lastchange'   => '1368300364',
          'comments'     => 'This shows a nameserver which is unreachable',
-         'acked'        => 1,
+         'acknowledged' => 1,
       },
       {
          'severity'     => 'high',
@@ -95,7 +95,7 @@ sub execute {
          'description'  => 'Webserver Down',
          'lastchange'   => '1368300364',
          'comments'     => 'This shows a webserver which is unreachable',
-         'acked'        => 1,
+         'acknowledged' => 1,
       },
       {
          'severity'     => 'average',
@@ -103,7 +103,7 @@ sub execute {
          'description'  => 'Webserver Down',
          'lastchange'   => '1368300364',
          'comments'     => 'This shows a webserver which is unreachable',
-         'acked'        => 1,
+         'acknowledged' => 1,
       },
       {
          'severity'     => 'warning',
@@ -111,7 +111,7 @@ sub execute {
          'description'  => 'HDD almost full',
          'lastchange'   => '1368300364',
          'comments'     => 'This shows a HDD which is almost full',
-         'acked'        => 1,
+         'acknowledged' => 1,
       },
       {
          'severity'     => 'information',
@@ -119,7 +119,7 @@ sub execute {
          'description'  => '/etc/passwd was just changed',
          'lastchange'   => '1368300364',
          'comments'     => 'This shows a webserver which is unreachable',
-         'acked'        => 1,
+         'acknowledged' => 1,
       },
       {
          'severity'     => 'nc',
@@ -127,9 +127,9 @@ sub execute {
          'description'  => 'Webserver Down',
          'lastchange'   => '1368300364',
          'comments'     => 'This shows a webserver which is unreachable',
-         'acked'        => 1,
+         'acknowledged' => 1,
       },
-    ]; 
+    ];
     my $refresh  = $request->{'refresh'} || 30;
 
     # include acked triggers
@@ -151,7 +151,7 @@ sub execute {
         },
         \$body,
     ) or $self->logger()->log( message => 'TT error: '.$self->tt()->error, level => 'warning', );
-    
+
     return [ 200, [ 'Content-Type', 'text/html' ], [$body] ];
 }
 

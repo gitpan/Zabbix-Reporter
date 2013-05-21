@@ -1,6 +1,6 @@
 package Zabbix::Reporter::Web::Plugin;
 {
-  $Zabbix::Reporter::Web::Plugin::VERSION = '0.04';
+  $Zabbix::Reporter::Web::Plugin::VERSION = '0.05';
 }
 BEGIN {
   $Zabbix::Reporter::Web::Plugin::AUTHORITY = 'cpan:TEX';
@@ -67,12 +67,12 @@ has 'alias' => (
 # initializers ...
 sub _init_zr {
     my $self = shift;
-    
+
     my $ZR = Zabbix::Reporter::->new({
         'config'    => $self->config(),
         'logger'    => $self->logger(),
     });
-    
+
     return $ZR;
 }
 

@@ -36,6 +36,7 @@ my %WriteMakefileArgs = (
     "DBI" => 0,
     "Data::Dumper" => 0,
     "File::ShareDir" => 0,
+    "IO::Socket::INET" => 0,
     "Log::Tree" => 0,
     "Log::Tree::Logger" => 0,
     "Log::Tree::RequiredLogger" => 0,
@@ -54,7 +55,7 @@ my %WriteMakefileArgs = (
     "strict" => 0,
     "warnings" => 0
   },
-  "VERSION" => "0.04",
+  "VERSION" => "0.05",
   "test" => {
     "TESTS" => "t/*.t"
   }

@@ -34,6 +34,7 @@
             "DBI" : "0",
             "Data::Dumper" : "0",
             "File::ShareDir" : "0",
+            "IO::Socket::INET" : "0",
             "Log::Tree" : "0",
             "Log::Tree::Logger" : "0",
             "Log::Tree::RequiredLogger" : "0",
@@ -71,7 +72,7 @@
          "web" : "https://github.com/gittex/Zabbix-Reporter"
       }
    },
-   "version" : "0.04",
+   "version" : "0.05",
    "x_authority" : "cpan:TEX"
 }
 

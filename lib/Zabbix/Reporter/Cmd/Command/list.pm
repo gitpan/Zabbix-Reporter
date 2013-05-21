@@ -1,6 +1,6 @@
 package Zabbix::Reporter::Cmd::Command::list;
 {
-  $Zabbix::Reporter::Cmd::Command::list::VERSION = '0.04';
+  $Zabbix::Reporter::Cmd::Command::list::VERSION = '0.05';
 }
 BEGIN {
   $Zabbix::Reporter::Cmd::Command::list::AUTHORITY = 'cpan:TEX';
@@ -31,12 +31,12 @@ extends 'Zabbix::Reporter::Cmd::Command';
 # your code here ...
 sub execute {
     my $self = shift;
-    
+
     my $triggers = $self->zr()->triggers();
     print Dumper($triggers);
-    
+
     # TODO not yet implemented
-    
+
     return 1;
 }
 
