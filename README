@@ -17,6 +17,15 @@ METHODS
   disabled_actions
     Retrieve all disabled actions.
 
+  unsupported_items
+    Retrieve all unsupported items.
+
+  unattended_alarms
+    Retrieve all unsupported items.
+
+  history
+    Retrieve all triggers.
+
 NAME
     Zabbix::Reporter - Zabbix dashboard
 

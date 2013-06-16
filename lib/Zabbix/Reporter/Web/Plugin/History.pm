@@ -1,11 +1,11 @@
-package Zabbix::Reporter::Web::Plugin::List;
+package Zabbix::Reporter::Web::Plugin::History;
 {
-  $Zabbix::Reporter::Web::Plugin::List::VERSION = '0.06';
+  $Zabbix::Reporter::Web::Plugin::History::VERSION = '0.06';
 }
 BEGIN {
-  $Zabbix::Reporter::Web::Plugin::List::AUTHORITY = 'cpan:TEX';
+  $Zabbix::Reporter::Web::Plugin::History::AUTHORITY = 'cpan:TEX';
 }
-# ABSTRACT: List all active triggers
+# ABSTRACT: List all triggers
 
 use 5.010_000;
 use mro 'c3';
@@ -27,24 +27,29 @@ extends 'Zabbix::Reporter::Web::Plugin';
 # has ...
 # with ...
 # initializers ...
-sub _init_fields { return [qw(limit offset refresh)]; }
+sub _init_fields { return [qw(limit offset refresh age num)]; }
 
-sub _init_alias { return 'list_triggers'; }
+sub _init_alias { return 'list_history'; }
 
 # your code here ...
 sub execute {
     my $self = shift;
     my $request = shift;
 
-    my $triggers = $self->zr()->triggers();
-    my $refresh  = $request->{'refresh'} || 30;
+    my $refresh  = $request->{'refresh'} || 360;
+    my $age      = $request->{'age'}     || 30;
+    my $num      = $request->{'num'}     || 100;
+    my $triggers = $self->zr()->history($age,$num);
 
     my $body;
     $self->tt()->process(
-        'list_triggers.tpl',
+        'list_history.tpl',
         {
             'triggers' => $triggers,
             'refresh'  => $refresh,
+            'title'    => 'Zabbix Trigger History',
+            'age'      => $age,
+            'num'      => $num,
         },
         \$body,
     ) or $self->logger()->log( message => 'TT error: '.$self->tt()->error, level => 'warning', );
@@ -68,7 +73,7 @@ __END__
 
 =head1 NAME
 
-Zabbix::Reporter::Web::Plugin::List - List all active triggers
+Zabbix::Reporter::Web::Plugin::History - List all triggers
 
 =head1 METHODS
 
@@ -78,7 +83,7 @@ List all active triggers.
 
 =head1 NAME
 
-Zabbix::Reporter::Web::API::Plugin::List - List all active triggers
+Zabbix::Reporter::Web::API::Plugin::History - List all triggers
 
 =head1 AUTHOR
 
