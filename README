@@ -17,6 +17,9 @@ METHODS
   disabled_actions
     Retrieve all disabled actions.
 
+  enable_actions
+    Enables all actions.
+
   unsupported_items
     Retrieve all unsupported items.
 

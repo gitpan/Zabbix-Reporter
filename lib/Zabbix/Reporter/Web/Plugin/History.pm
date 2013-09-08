@@ -1,6 +1,6 @@
 package Zabbix::Reporter::Web::Plugin::History;
 {
-  $Zabbix::Reporter::Web::Plugin::History::VERSION = '0.06';
+  $Zabbix::Reporter::Web::Plugin::History::VERSION = '0.07';
 }
 BEGIN {
   $Zabbix::Reporter::Web::Plugin::History::AUTHORITY = 'cpan:TEX';

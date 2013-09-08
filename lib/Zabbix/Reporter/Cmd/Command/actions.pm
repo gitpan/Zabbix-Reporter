@@ -1,11 +1,11 @@
-package Zabbix::Reporter::Cmd::Command::list;
+package Zabbix::Reporter::Cmd::Command::actions;
 {
-  $Zabbix::Reporter::Cmd::Command::list::VERSION = '0.07';
+  $Zabbix::Reporter::Cmd::Command::actions::VERSION = '0.07';
 }
 BEGIN {
-  $Zabbix::Reporter::Cmd::Command::list::AUTHORITY = 'cpan:TEX';
+  $Zabbix::Reporter::Cmd::Command::actions::AUTHORITY = 'cpan:TEX';
 }
-# ABSTRACT: list all triggers from the CLI
+# ABSTRACT: enable all actions from the CLI
 
 use 5.010_000;
 use mro 'c3';
@@ -32,16 +32,13 @@ extends 'Zabbix::Reporter::Cmd::Command';
 sub execute {
     my $self = shift;
 
-    my $triggers = $self->zr()->triggers();
-    print Dumper($triggers);
-
-    # TODO not yet implemented
+    my $status = $self->zr()->enable_actions();
 
     return 1;
 }
 
 sub abstract {
-    return 'List all triggers';
+    return 'Enable all actions';
 }
 
 no Moose;
@@ -57,7 +54,7 @@ __END__
 
 =head1 NAME
 
-Zabbix::Reporter::Cmd::Command::list - list all triggers from the CLI
+Zabbix::Reporter::Cmd::Command::actions - enable all actions from the CLI
 
 =head1 METHODS
 

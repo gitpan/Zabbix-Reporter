@@ -1,6 +1,6 @@
 package Zabbix::Reporter;
 {
-  $Zabbix::Reporter::VERSION = '0.06';
+  $Zabbix::Reporter::VERSION = '0.07';
 }
 BEGIN {
   $Zabbix::Reporter::AUTHORITY = 'cpan:TEX';
@@ -349,6 +349,26 @@ EOS
     return $rows;
 }
 
+sub enable_actions {
+  my $self = shift;
+
+  # status = 0 -> action is enabled
+  # status = 1 -> action is disabled
+  my $sql = <<'EOS';
+UPDATE
+  actions
+SET
+  status = 0
+WHERE
+  status = 1 AND
+  eventsource = 0
+EOS
+
+  my $rows = $self->fetch($sql);
+
+  return $rows;
+}
+
 sub unsupported_items {
     my $self = shift;
 
@@ -478,6 +498,10 @@ Retrieve all matching acknowlegements.
 =head2 disabled_actions
 
 Retrieve all disabled actions.
+
+=head2 enable_actions
+
+Enables all actions.
 
 =head2 unsupported_items
 

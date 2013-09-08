@@ -1,6 +1,6 @@
 package Zabbix::Reporter::Web::Plugin::Selftest;
 {
-  $Zabbix::Reporter::Web::Plugin::Selftest::VERSION = '0.06';
+  $Zabbix::Reporter::Web::Plugin::Selftest::VERSION = '0.07';
 }
 BEGIN {
   $Zabbix::Reporter::Web::Plugin::Selftest::AUTHORITY = 'cpan:TEX';

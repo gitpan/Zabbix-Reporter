@@ -19,6 +19,7 @@ examples/zreporter-tv.png
 lib/Zabbix/Reporter.pm
 lib/Zabbix/Reporter/Cmd.pm
 lib/Zabbix/Reporter/Cmd/Command.pm
+lib/Zabbix/Reporter/Cmd/Command/actions.pm
 lib/Zabbix/Reporter/Cmd/Command/list.pm
 lib/Zabbix/Reporter/Web.pm
 lib/Zabbix/Reporter/Web/Plugin.pm
